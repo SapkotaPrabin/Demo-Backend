@@ -17,6 +17,11 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "ignoreDeprecations": "6.0",
+    "types": [
+      "node",
+      "jest"
+    ],
     "paths": {
       "core/core": [
         "libs/core/src"

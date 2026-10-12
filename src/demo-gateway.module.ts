@@ -9,10 +9,10 @@ import { ServiceRouteProvider } from './routes';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { SharedModule } from 'libs/modules';
 import { CoreModule } from 'core/core';
+import { AuthUseCase } from './user/application/usecases/auth.usecase';
+import { typeOrmConfigs } from './frameworks/config/database.config';
 
 // Import Core Service configuration and providers
-import { typeOrmConfigs } from 'src/user/frameworks/config/database.config';
-
 const RouteProvider = {
   provide: 'ROUTES',
   useFactory: () => {
@@ -36,10 +36,11 @@ const RouteProvider = {
   ],
   controllers: [],
   providers: [
-    RouteProvider
+    RouteProvider,
+    AuthUseCase,
   ],
 })
-export class ApiGatewayModule implements NestModule {
+export class DemoGatewayModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes('*');
     consumer.apply(ProxyMiddleware).forRoutes('*');

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { GatewayDataService } from 'api-gateway/src/frameworks/api-gateway.dataservice';
 import { CoreService } from 'core/core';
+import { DemoDataService } from 'src/frameworks/demo.dataservice';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true })],
   providers: [
-    GatewayDataService,
+    DemoDataService,
     CoreService,
   ],
-  exports: [ GatewayDataService, CoreService],
+  exports: [ DemoDataService, CoreService],
 })
 export class SharedModule {}
