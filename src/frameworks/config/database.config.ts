@@ -1,6 +1,9 @@
 import 'dotenv/config';
 import { DataSourceOptions } from 'typeorm';
 import { join } from 'path';
+import { User } from '../entities/user.entity';
+import { Role } from '../entities/role.entity';
+import { MerchantApplication } from '../entities/merchant_application.entity';
 
 const requiredEnv = (name: string): string => {
   const value = process.env[name];
@@ -22,9 +25,13 @@ export const typeOrmConfigs: DataSourceOptions = {
   username: requiredEnv('DATABASE_USERNAME'),
   password: requiredEnv('DATABASE_PASSWORD'),
   database: requiredEnv('DATABASE_NAME'),
-  entities: [],
+  entities: [
+    User,
+    Role,
+    MerchantApplication,
+  ],
   migrations: [
-    join(__dirname, '../database/migrations/*{.ts,.js}'),
+    join(__dirname, '../migrations/*{.ts,.js}'),
   ],
   synchronize: false,
   logging: true,
