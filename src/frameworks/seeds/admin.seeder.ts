@@ -4,6 +4,7 @@ import { Role } from '../entities/role.entity';
 import { roleCodes } from 'libs/utils/constants.utils';
 import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { typeOrmConfigs } from '../config/database.config';
 
 export class SuperAdminSeeder implements Seeder {
   async run(dataSource: DataSource): Promise<void> {
@@ -24,23 +25,15 @@ export class SuperAdminSeeder implements Seeder {
         });
 
         if (!existingSuperAdmin) {
+          const encryptPassword = await bcrypt.hash('DemoUser@#123', 10);
           const user = {
             firstName: 'System',
             lastName: 'Admin',
             contactNumber: '1234567890',
             email: 'support@demo.com',
+            password: encryptPassword,
           };
           const superAdmin = await userRepository.insert(user);
-          const encryptPassword = await bcrypt.hash('DemoUser@#123', 10);
-          const verificationCode = new VerificationCode().create();
-          const userAuth = {
-            userId: superAdmin.identifiers[0].userId,
-            password: encryptPassword,
-            verificationCode: verificationCode.value,
-            verificationCodeExpiresAt: verificationCode.expiresAt,
-            verificationCodeCreatedOn: verificationCode.createdOn,
-          };
-          await userAuthRepository.insert(userAuth);
           await userRepository.createQueryBuilder().relation(User, 'roles').of(superAdmin.identifiers[0].userId).add(existingRole);
           console.log('✓ Super Admin seeded successfully.');
         } else {

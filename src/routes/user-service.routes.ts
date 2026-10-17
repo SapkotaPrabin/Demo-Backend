@@ -8,5 +8,10 @@ export class UserServiceRouteConfig extends GenericServiceRouteConfig {
   }
 
   routes = [
+    {
+      source: '/auth/login',
+      target: `/auth/login`,
+      auth: false,
+    },
   ];
 }

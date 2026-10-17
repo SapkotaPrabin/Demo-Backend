@@ -11,6 +11,9 @@ import { SharedModule } from 'libs/modules';
 import { CoreModule } from 'core/core';
 import { AuthUseCase } from './user/application/usecases/auth.usecase';
 import { typeOrmConfigs } from './frameworks/config/database.config';
+import { AuthController } from './user/controllers/auth/auth.controller';
+import { UserRepository } from './user/repositories/user.repository';
+import { TokenService } from './user/application/services/token.service';
 
 // Import Core Service configuration and providers
 const RouteProvider = {
@@ -34,10 +37,19 @@ const RouteProvider = {
     }),
     HttpModule,
   ],
-  controllers: [],
+  controllers: [AuthController],
   providers: [
     RouteProvider,
     AuthUseCase,
+    UserRepository,
+    TokenService,
+    {
+      provide: AuthUseCase,
+      inject: [UserRepository, TokenService],
+      useFactory: (userRepository: UserRepository, tokenService: TokenService) => {
+        return new AuthUseCase(userRepository, tokenService);
+      },
+    },
   ],
 })
 export class DemoGatewayModule implements NestModule {
