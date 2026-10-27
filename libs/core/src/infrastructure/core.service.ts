@@ -111,35 +111,15 @@ export class CoreService {
     }
   }
 
-  async checkForNextPage(entity: any, filter: General, page: number, limit: number) {
-    const offset = (page - 1) * limit;
-    return this.findAndCount(entity, {
-      ...filter,
-      ...(!!offset && { skip: offset }),
-      ...(!!limit && { take: Number(limit) + 1 }),
-    });
-  }
-
-  async findPaginated(entity: any, filter: General, page: number, limit: number): Promise<any> {
-    if (!page || page === 0 || !limit) {
-      const [data, count] = await this.findAndCount(entity, {
-        order: {
-          created_at: 'DESC',
-        },
-        ...filter,
-      });
-      return [data, count, false];
+  async paginatedResult<T>(queryBuilder: any, page: number, limit: number): Promise<[T[], number]> {
+    if (!page || page == 0 || !limit) {
+      const data = await queryBuilder.getMany();
+      const count = data.length;
+      return [data, count];
     }
-    const offset = (page - 1) * limit;
-    const [nextPageData] = await this.checkForNextPage(entity, filter, page, limit);
-    const [paginatedData, count] = await this.findAndCount(entity, {
-      order: {
-        created_at: 'DESC',
-      },
-      ...filter,
-      ...(!!offset && { skip: offset }),
-      ...(!!limit && { take: limit }),
-    });
-    return [paginatedData, count, nextPageData.length > paginatedData.length];
+    const take = limit || 10;
+    const skip = (page - 1) * take;
+    const [data, count] = await queryBuilder.clone().take(take).skip(skip).getManyAndCount();
+    return [data, count];
   }
 }

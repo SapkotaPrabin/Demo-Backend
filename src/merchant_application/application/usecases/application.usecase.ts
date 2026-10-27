@@ -6,6 +6,7 @@ import { ApplicationStatus, roleCodes } from 'libs/utils/constants.utils';
 import { IMerchantApplicationRepository } from 'src/merchant_application/business/repositories/merchant_application.repository';
 import { CreateApplicationDto } from 'src/merchant_application/business/dtos/application.dto';
 import { MerchantApplicationFactory } from 'src/merchant_application/business/factories/application.factory';
+import { isAdmin } from 'libs/utils/helper.utils';
 
 @Injectable()
 export class ApplicationUseCase {
@@ -35,6 +36,21 @@ export class ApplicationUseCase {
       return ResponseData('Application created successfully', savedApplication, true, null);
     } catch (error) {
       console.log('Error while create application', error);
+      throw error;
+    }
+  }
+
+  async getApplicationList(user: any, query?: { page?: number; limit?: number }): Promise<ResponseType> {
+    try {
+      const isAdminUser = await isAdmin(user);
+      let filter = {};
+      if (!isAdminUser) {
+        filter = { createdBy: user?.userId };
+      }
+      const [applications, count] = await this.merchantApplicationRepository.getApplicationList(filter, query);
+      return ResponseData('Application list fetched successfully', { applications, count }, true, null);
+    } catch (error) {
+      console.log('Error while fetching application list', error);
       throw error;
     }
   }

@@ -4,10 +4,14 @@ import { DemoDataService } from 'src/frameworks/demo.dataservice';
 import { IMerchantApplicationRepository } from '../business/repositories/merchant_application.repository';
 import { MerchantApplication } from '../business/entities/merchant_application.entity';
 import { MerchantApplication as MerchantApplicationEntity } from 'src/frameworks/entities/merchant_application.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class MerchantApplicationRepository extends IMerchantApplicationRepository {
-  constructor(private readonly userDataService: DemoDataService) {
+  constructor(
+    private readonly userDataService: DemoDataService,
+    private readonly dataSource: DataSource,
+  ) {
     super();
   }
 
@@ -43,5 +47,16 @@ export class MerchantApplicationRepository extends IMerchantApplicationRepositor
   async findOneBy(filter: General): Promise<MerchantApplication> {
     const application = await this.userDataService.findOne(MerchantApplicationEntity, { where: filter });
     return application;
+  }
+
+  async getApplicationList(filter: any, query?: { page?: number; limit?: number }): Promise<[MerchantApplication[], number]> {
+    const { page, limit } = query;
+    const queryBuilder = this.dataSource.createQueryBuilder().from(MerchantApplicationEntity, 'ma').leftJoin('ma.createdBy', 'cb').leftJoin('ma.assignedReviewer', 'ar').select(['ma', 'cb', 'ar']);
+    if (filter) {
+      queryBuilder.where(filter);
+    }
+
+    queryBuilder.orderBy('ma.createdAt', 'DESC');
+    return await this.userDataService.paginatedResult<MerchantApplication>(queryBuilder, page, limit);
   }
 }
