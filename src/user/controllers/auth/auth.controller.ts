@@ -13,7 +13,6 @@ export class AuthController {
 
   @Get('/profile')
   async getProfile(@User() user: any) {
-    console.log("User Data", user);
     return await this.AuthUseCase.getProfile(user?.userId);
   }
 }

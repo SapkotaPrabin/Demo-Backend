@@ -12,5 +12,5 @@ interface UserDTO {
   contactNumber: string;
   email: string;
   password: string;
-  role: RoleDTO;
+  role: RoleDTO[];
 }

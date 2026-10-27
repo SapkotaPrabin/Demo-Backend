@@ -14,10 +14,7 @@ export class AuthMiddleware implements NestMiddleware {
   async use(request: Request, _response: Response, next: NextFunction) {
     let formattedUrl: string;
     formattedUrl = request.originalUrl.replace(/\?.*$/, '');
-    // If the URL matches the pattern with path parameters and optional query parameters
-    if (/^\/[\w\-]+\/\d+/.test(request.originalUrl)) {
-      formattedUrl = formattedUrl.replace(/\/\d+/, '/:id');
-    }
+    formattedUrl = formattedUrl.replace(/\/\d+(?=\/|$)/g, '/:id');
     const route = this.routes[formattedUrl];
     if (!!route && !!route.auth) {
       const token = (request.headers.authorization && request.headers.authorization.replace('Bearer ', '')) || null;

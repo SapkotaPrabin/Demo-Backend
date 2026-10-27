@@ -25,7 +25,9 @@
     "demo-gateway:migration:create": "npm run demo-gateway:typeorm -- migration:create src/frameworks/migrations/$npm_config_name",
     "demo-gateway:migration:run": "npm run demo-gateway:typeorm:cli -- migration:run -d src/frameworks/datasource.ts",
     "demo-service:seed-default-roles": "ts-node -r tsconfig-paths/register src/frameworks/seeds/roles.seeder.ts",
-    "demo-service:seed-default-admin": "ts-node -r tsconfig-paths/register src/frameworks/seeds/admin.seeder.ts"
+    "demo-service:seed-default-admin": "ts-node -r tsconfig-paths/register src/frameworks/seeds/admin.seeder.ts",
+    "demo-service:seed-default-sales": "ts-node -r tsconfig-paths/register src/frameworks/seeds/sales.seeder.ts",
+    "demo-service:seed-default-reviewer": "ts-node -r tsconfig-paths/register src/frameworks/seeds/reviewer.seeder.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^12.0.1",

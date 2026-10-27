@@ -9,7 +9,7 @@ export class User {
   contactNumber: string;
   email?: string;
   password: string;
-  role: Role;
+  role: Role[];
 
   constructor(userDTO: UserDTO) {
     if (userDTO.userId) {
@@ -23,7 +23,7 @@ export class User {
     this.contactNumber = userDTO.contactNumber;
     this.email = userDTO.email;
     this.password = userDTO.password;
-    this.role = new Role(userDTO.role);
+    this.role = userDTO.role;
   }
 
   async verifyPassword(password: string) {
