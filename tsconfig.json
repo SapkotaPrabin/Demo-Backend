@@ -23,6 +23,12 @@
       "jest"
     ],
     "paths": {
+      "src/*": [
+        "src/*"
+      ],
+      "libs/*": [
+        "libs/*"
+      ],
       "core/core": [
         "libs/core/src"
       ],

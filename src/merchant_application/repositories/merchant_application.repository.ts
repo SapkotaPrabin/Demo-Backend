@@ -5,6 +5,7 @@ import { IMerchantApplicationRepository } from '../business/repositories/merchan
 import { MerchantApplication } from '../business/entities/merchant_application.entity';
 import { MerchantApplication as MerchantApplicationEntity } from 'src/frameworks/entities/merchant_application.entity';
 import { DataSource } from 'typeorm';
+import { roleCodes } from 'libs/utils/constants.utils';
 
 @Injectable()
 export class MerchantApplicationRepository extends IMerchantApplicationRepository {
@@ -16,7 +17,10 @@ export class MerchantApplicationRepository extends IMerchantApplicationRepositor
   }
 
   async get(_id: number): Promise<MerchantApplication> {
-    return this.userDataService.findOne(MerchantApplicationEntity, { where: { applicationId: _id || 0 } });
+    return this.userDataService.findOne(MerchantApplicationEntity, {
+      where: { applicationId: _id || 0 },
+      relations: { assignedReviewer: true },
+    });
   }
 
   async create(newAddress: MerchantApplication) {
@@ -49,11 +53,24 @@ export class MerchantApplicationRepository extends IMerchantApplicationRepositor
     return application;
   }
 
-  async getApplicationList(filter: any, query?: { page?: number; limit?: number }): Promise<[MerchantApplication[], number]> {
-    const { page, limit } = query;
+  async getApplicationList(filter: { role: string; userId: number }, query?: { page?: number; limit?: number; status?: string }): Promise<[MerchantApplication[], number]> {
+    const { page, limit, status } = query;
+    const { role, userId } = filter;
     const queryBuilder = this.dataSource.createQueryBuilder().from(MerchantApplicationEntity, 'ma').leftJoin('ma.createdBy', 'cb').leftJoin('ma.assignedReviewer', 'ar').select(['ma', 'cb', 'ar']);
-    if (filter) {
-      queryBuilder.where(filter);
+
+    switch (role) {
+      case roleCodes.REVIEWER:
+        queryBuilder.where('ar.userId = :reviewerId', { reviewerId: userId });
+        break;
+      case roleCodes.SALES:
+        queryBuilder.where('cb.userId = :createdBy', { createdBy: userId });
+        break;
+      default:
+        break;
+    }
+
+    if (!!status) {
+      queryBuilder.andWhere('ma.applicationStatus ILIKE :status', { status: status });
     }
 
     queryBuilder.orderBy('ma.createdAt', 'DESC');

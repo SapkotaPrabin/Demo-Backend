@@ -1,14 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './user.entity';
-import { ApplicationStatus, RiskStatus } from 'libs/utils/constants.utils';
+import { ApplicationStatus, RiskDecision, RiskStatus } from 'libs/utils/constants.utils';
 
 @Entity({ name: 'merchant_application' })
 export class MerchantApplication {
@@ -44,7 +36,7 @@ export class MerchantApplication {
     type: 'numeric',
     precision: 12,
     scale: 2,
-    nullable: false
+    nullable: false,
   })
   averageTransactionAmount: string;
 
@@ -63,6 +55,14 @@ export class MerchantApplication {
     default: RiskStatus.PENDING,
   })
   riskStatus: RiskStatus;
+
+  @Column({
+    name: 'risk_decision',
+    type: 'enum',
+    enum: RiskDecision,
+    default: RiskDecision.PENDING,
+  })
+  riskDecision: RiskDecision;
 
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'created_by_user_id', referencedColumnName: 'userId' })

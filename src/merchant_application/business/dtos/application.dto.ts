@@ -1,5 +1,4 @@
-import { ApplicationStatus } from "libs/utils/constants.utils";
-
+import { ApplicationStatus, RiskStatus } from 'libs/utils/constants.utils';
 
 export class CreateApplicationDto {
   businessName: string;
@@ -12,6 +11,9 @@ export class CreateApplicationDto {
   requestedMonthlyVolume: number | string;
   averageTransactionAmount: number | string;
   assignedReviewerId?: number;
+  salesUserId?: number;
+  applicationStatus: ApplicationStatus;
+  riskStatus: RiskStatus;
 }
 
 export class UpdateApplicationDto {
@@ -24,15 +26,8 @@ export class UpdateApplicationDto {
   ownerContactNumber?: string;
   requestedMonthlyVolume?: number | string;
   averageTransactionAmount?: number | string;
-  applicationStatus?: ApplicationStatus;
   assignedReviewerId?: number;
-}
-
-export class AssignReviewerDto {
-  reviewerId: number;
-}
-
-export class ApplicationDecisionDto {
-  decision: 'APPROVE' | 'REJECT' | 'REQUEST_INFO';
-  notes?: string;
+  salesUserId?: number;
+  applicationStatus: ApplicationStatus;
+  riskStatus: RiskStatus;
 }

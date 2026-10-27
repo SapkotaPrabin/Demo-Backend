@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ResponseData } from 'libs/utils/response.utils';
-import { CreateApplicationDto } from '../dtos/application.dto';
+import { CreateApplicationDto, UpdateApplicationDto } from '../dtos/application.dto';
 import { MerchantApplication } from '../entities/merchant_application.entity';
 import { validateEmail, validateNumber } from 'libs/utils/validate.utils';
 
 export class MerchantApplicationFactory {
-  async create(applicationDTO: CreateApplicationDto) {
+  async create(applicationDTO: CreateApplicationDto | UpdateApplicationDto) {
     const isValid = this.validateCreate(applicationDTO);
 
     if (isValid) {
@@ -14,7 +14,7 @@ export class MerchantApplicationFactory {
     }
   }
 
-  private validateCreate(applicationDTO: CreateApplicationDto): boolean | object {
+  private validateCreate(applicationDTO: CreateApplicationDto | UpdateApplicationDto): boolean | object {
     let errors: any = {};
 
     if (!applicationDTO?.businessName) {
@@ -65,6 +65,14 @@ export class MerchantApplicationFactory {
       errors.assignedReviewerId = `Missing assigned reviewer id`;
     } else if (isNaN(Number(applicationDTO?.assignedReviewerId))) {
       errors.assignedReviewerId = `Invalid assigned reviewer id`;
+    }
+
+    if (!applicationDTO?.applicationStatus) {
+      errors.applicationStatus = 'Missing application status';
+    }
+
+    if (!applicationDTO?.riskStatus) {
+      errors.riskStatus = 'Missing risk status';
     }
 
     if (Object.keys(errors).length > 0) {

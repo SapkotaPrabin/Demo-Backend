@@ -1,4 +1,4 @@
-import { ApplicationStatus, RiskStatus } from "libs/utils/constants.utils";
+import { ApplicationStatus, RiskDecision, RiskStatus } from "libs/utils/constants.utils";
 import { User } from "src/user/business/entities/user.entity";
 
 
@@ -15,6 +15,7 @@ export class MerchantApplication {
   averageTransactionAmount: number;
   applicationStatus: ApplicationStatus;
   riskStatus: RiskStatus;
+  riskDecision: RiskDecision;
   assignedReviewer?: User;
   assignedReviewerId?: number;
   createdBy: User;
@@ -34,6 +35,7 @@ export class MerchantApplication {
     this.averageTransactionAmount = dto.averageTransactionAmount;
     this.applicationStatus = dto.applicationStatus;
     this.riskStatus = dto.riskStatus;
+    this.riskDecision = dto.riskDecision;
     this.assignedReviewer = dto.assignedReviewer;
     if (dto.assignedReviewerId) {
       this.assignedReviewerId = dto.assignedReviewerId;

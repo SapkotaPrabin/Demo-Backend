@@ -21,3 +21,9 @@ export enum RiskStatus {
   HIGH = 'HIGH',
   PROHIBITED = 'PROHIBITED',
 }
+
+export enum RiskDecision {
+  PENDING = 'PENDING',
+  APPROVE = 'APPROVE',
+  REJECT = 'REJECT'
+}

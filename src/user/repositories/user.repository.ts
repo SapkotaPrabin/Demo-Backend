@@ -55,11 +55,13 @@ export class UserRepository extends IUserRepository {
     .from(UserEntity, 'u')
     .leftJoin('u.role', 'r')
     .select([
+      'u.userId',
       'u.firstName',
       'u.middleName',
       'u.lastName',
       'u.email',
       'u.contactNumber',
+      'u.created_at',
       'r'
     ]);
     queryBuilder.where('r.roleCode = :roleCode', { roleCode });

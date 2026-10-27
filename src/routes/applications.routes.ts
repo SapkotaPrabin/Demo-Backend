@@ -19,19 +19,9 @@ export class ApplicationsRouteConfig extends GenericServiceRouteConfig {
       auth: true,
     },
     {
-      source: '/applications/:id/assign',
-      target: `/applications/:id/assign`,
+      source: '/applications/risk-decision/:id',
+      target: `/applications/risk-decision/:id`,
       auth: true,
-    },
-    {
-      source: '/applications/:id/submit',
-      target: `/applications/:id/submit`,
-      auth: true,
-    },
-    {
-      source: '/applications/:id/decision',
-      target: `/applications/:id/decision`,
-      auth: true,
-    },
+    }
   ];
 }
