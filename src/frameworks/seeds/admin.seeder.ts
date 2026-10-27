@@ -34,7 +34,7 @@ export class SuperAdminSeeder implements Seeder {
             password: encryptPassword,
           };
           const superAdmin = await userRepository.insert(user);
-          await userRepository.createQueryBuilder().relation(User, 'roles').of(superAdmin.identifiers[0].userId).add(existingRole);
+          await userRepository.createQueryBuilder().relation(User, 'role').of(superAdmin.identifiers[0].userId).add(existingRole);
           console.log('✓ Super Admin seeded successfully.');
         } else {
           console.log('✓ Super admin account already exist');

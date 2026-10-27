@@ -53,10 +53,41 @@ export class AuthUseCase {
     }
   }
 
+  async getProfile(userId: number): Promise<any> {
+    try {
+      const userData = await this.userRepository.get(userId);
+      if (!userData) {
+        throw new HttpException(
+          {
+            ...ResponseData('User not found', null, false, {
+              message: 'No user found with the provided ID',
+            }),
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      delete userData.password;
+      return ResponseData('User profile fetched successfully', userData, true, null);
+    } catch (error) {
+      console.log('Error at getProfile:', error);
+      throw error;
+    }
+  }
+
   async getLoggedInUser(userId: number): Promise<any> {
     try {
-      console.log('AuthUseCase getLoggedInUser called with userId:', userId);
-      return { userId, name: 'Demo User' };
+      const userData = await this.userRepository.get(userId);
+      if (!userData) {
+        throw new HttpException(
+          {
+            ...ResponseData('User not found', null, false, {
+              message: 'No user found with the provided ID',
+            }),
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return userData;
     } catch (error) {
       console.log('Error at getLoggedInUser:', error);
       throw error;

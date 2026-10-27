@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthUseCase } from '../../application/usecases/auth.usecase';
+import { User } from 'src/middlewares/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -8,5 +9,11 @@ export class AuthController {
   @Post('/login')
   async login(@Body() authVerifyPasswordDTO: AuthVerifyPasswordDTO) {
     return await this.AuthUseCase.login(authVerifyPasswordDTO);
+  }
+
+  @Get('/profile')
+  async getProfile(@User() user: any) {
+    console.log("User Data", user);
+    return await this.AuthUseCase.getProfile(user?.userId);
   }
 }

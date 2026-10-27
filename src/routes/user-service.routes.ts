@@ -13,5 +13,10 @@ export class UserServiceRouteConfig extends GenericServiceRouteConfig {
       target: `/auth/login`,
       auth: false,
     },
+    {
+      source: '/auth/profile',
+      target: `/auth/profile`,
+      auth: true,
+    },
   ];
 }
