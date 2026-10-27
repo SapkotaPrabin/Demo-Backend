@@ -19,6 +19,8 @@ import { User } from './frameworks/entities/user.entity';
 import { ApplicationController } from './merchant_application/controllers/application/application.controller';
 import { MerchantApplicationRepository } from './merchant_application/repositories/merchant_application.repository';
 import { ApplicationUseCase } from './merchant_application/application/usecases/application.usecase';
+import { UserUseCase } from './user/application/usecases/user.usecase';
+import { UserController } from './user/controllers/user/user.controller';
 
 // Import Core Service configuration and providers
 const RouteProvider = {
@@ -43,10 +45,11 @@ const RouteProvider = {
     }),
     HttpModule,
   ],
-  controllers: [AuthController, ApplicationController],
+  controllers: [AuthController, UserController, ApplicationController],
   providers: [
     RouteProvider,
     AuthUseCase,
+    UserUseCase,
     ApplicationUseCase,
     UserRepository,
     TokenService,
@@ -56,6 +59,13 @@ const RouteProvider = {
       inject: [UserRepository, TokenService],
       useFactory: (userRepository: UserRepository, tokenService: TokenService) => {
         return new AuthUseCase(userRepository, tokenService);
+      },
+    },
+    {
+      provide: UserUseCase,
+      inject: [UserRepository],
+      useFactory: (userRepository: UserRepository) => {
+        return new UserUseCase(userRepository);
       },
     },
     {

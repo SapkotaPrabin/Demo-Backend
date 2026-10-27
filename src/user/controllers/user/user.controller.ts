@@ -1,9 +1,13 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Get } from '@nestjs/common';
+import { User } from 'src/middlewares/user.decorator';
+import { UserUseCase } from 'src/user/application/usecases/user.usecase';
 
-@Controller('users')
-export class UserServiceController {
-  constructor(
-    // private readonly userUseCase: UserUseCase,
-  ) {}
+@Controller('user')
+export class UserController {
+  constructor(private readonly userUseCase: UserUseCase) {}
 
+  @Get('/profile')
+  async getProfile(@User() user: any) {
+    return await this.userUseCase.getProfile(user?.userId);
+  }
 }

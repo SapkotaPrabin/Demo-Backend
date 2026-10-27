@@ -1,11 +1,13 @@
 import { ApplicationsRouteConfig } from './applications.routes';
-import { UserServiceRouteConfig } from './user-service.routes';
+import { AuthRouteConfig } from './auth.routes';
+import { UserRouteConfig } from './user.routes';
 export class ServiceRouteProvider {
   allServiceRoutes: any;
 
   constructor() {
     this.allServiceRoutes = [
-      ...new UserServiceRouteConfig().getRoutes(),
+      ...new AuthRouteConfig().getRoutes(),
+      ...new UserRouteConfig().getRoutes(),
       ...new ApplicationsRouteConfig().getRoutes(),
     ];
   }

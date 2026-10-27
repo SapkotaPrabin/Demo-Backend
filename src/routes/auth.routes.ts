@@ -1,10 +1,10 @@
 import { GenericServiceRouteConfig } from './generic-service.routes';
 
-export class UserServiceRouteConfig extends GenericServiceRouteConfig {
+export class AuthRouteConfig extends GenericServiceRouteConfig {
   static baseURLConfigField = process.env.CORE_SERVICE_ENDPOINT;
 
   constructor() {
-    super(UserServiceRouteConfig.baseURLConfigField);
+    super(AuthRouteConfig.baseURLConfigField);
   }
 
   routes = [
@@ -12,11 +12,6 @@ export class UserServiceRouteConfig extends GenericServiceRouteConfig {
       source: '/auth/login',
       target: `/auth/login`,
       auth: false,
-    },
-    {
-      source: '/auth/profile',
-      target: `/auth/profile`,
-      auth: true,
     },
   ];
 }
