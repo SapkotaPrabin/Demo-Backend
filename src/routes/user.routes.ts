@@ -13,5 +13,15 @@ export class UserRouteConfig extends GenericServiceRouteConfig {
       target: `/user/profile`,
       auth: true,
     },
+    {
+      source: '/user/sales',
+      target: `/user/sales`,
+      auth: true,
+    },
+    {
+      source: '/user/reviewer',
+      target: `/user/reviewer`,
+      auth: true,
+    },
   ];
 }
