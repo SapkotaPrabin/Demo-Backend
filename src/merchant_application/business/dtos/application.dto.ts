@@ -1,4 +1,5 @@
-import { ApplicationStatus } from "src/user/utils/constants.utils";
+import { ApplicationStatus } from "libs/utils/constants.utils";
+
 
 export class CreateApplicationDto {
   businessName: string;

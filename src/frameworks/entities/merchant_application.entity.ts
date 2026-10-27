@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { ApplicationStatus, RiskStatus } from '../../user/utils/constants.utils';
+import { ApplicationStatus, RiskStatus } from 'libs/utils/constants.utils';
 
 @Entity({ name: 'merchant_application' })
 export class MerchantApplication {

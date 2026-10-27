@@ -1,5 +1,6 @@
-import { ApplicationStatus, RiskStatus } from 'src/user/utils/constants.utils';
-import { User } from './user.entity';
+import { ApplicationStatus, RiskStatus } from "libs/utils/constants.utils";
+import { User } from "src/user/business/entities/user.entity";
+
 
 export class MerchantApplication {
   applicationId?: number;

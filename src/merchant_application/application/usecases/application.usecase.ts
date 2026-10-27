@@ -2,11 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ResponseData } from 'libs/utils/response.utils';
 import type { ResponseType } from 'libs/utils/response.utils';
 import { IUserRepository } from 'src/user/business/repositories/user.repository';
-import { CreateApplicationDto } from 'src/user/business/dtos/application.dto';
-import { ApplicationStatus } from 'src/user/utils/constants.utils';
-import { MerchantApplicationFactory } from 'src/user/business/factories/application.factory';
-import { IMerchantApplicationRepository } from 'src/user/business/repositories/merchant_application.repository';
-import { roleCodes } from 'libs/utils/constants.utils';
+import { ApplicationStatus, roleCodes } from 'libs/utils/constants.utils';
+import { IMerchantApplicationRepository } from 'src/merchant_application/business/repositories/merchant_application.repository';
+import { CreateApplicationDto } from 'src/merchant_application/business/dtos/application.dto';
+import { MerchantApplicationFactory } from 'src/merchant_application/business/factories/application.factory';
 
 @Injectable()
 export class ApplicationUseCase {

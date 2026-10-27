@@ -3,3 +3,21 @@ export const roleCodes = {
   REVIEWER: 'REVIEWER',
   SALES: 'SALES',
 };
+
+export enum ApplicationStatus {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  INFO_REQUIRED = 'INFO_REQUIRED',
+  APPROVED = 'APPROVED',
+  DECLINED = 'DECLINED',
+  WITHDRAWN = 'WITHDRAWN',
+}
+
+export enum RiskStatus {
+  PENDING = 'PENDING',
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  PROHIBITED = 'PROHIBITED',
+}

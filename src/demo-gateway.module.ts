@@ -14,11 +14,11 @@ import { typeOrmConfigs } from './frameworks/config/database.config';
 import { AuthController } from './user/controllers/auth/auth.controller';
 import { UserRepository } from './user/repositories/user.repository';
 import { TokenService } from './user/application/services/token.service';
-import { ApplicationController } from './user/controllers/application/application.controller';
 import { MerchantApplication } from './frameworks/entities/merchant_application.entity';
 import { User } from './frameworks/entities/user.entity';
-import { ApplicationUseCase } from './user/application/usecases/application.usecase';
-import { MerchantApplicationRepository } from './user/repositories/merchant_application.repository';
+import { ApplicationController } from './merchant_application/controllers/application/application.controller';
+import { MerchantApplicationRepository } from './merchant_application/repositories/merchant_application.repository';
+import { ApplicationUseCase } from './merchant_application/application/usecases/application.usecase';
 
 // Import Core Service configuration and providers
 const RouteProvider = {
