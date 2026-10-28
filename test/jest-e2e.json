@@ -1,9 +1,28 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
+  "extensionsToTreatAsEsm": [".ts"],
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "useESM": true,
+        "tsconfig": {
+          "module": "ESNext",
+          "experimentalDecorators": true,
+          "emitDecoratorMetadata": true,
+          "allowSyntheticDefaultImports": true
+        }
+      }
+    ]
+  },
+  "moduleNameMapper": {
+    "^src/(.*)$": "<rootDir>/../src/$1",
+    "^libs/(.*)$": "<rootDir>/../libs/$1",
+    "^core/core$": "<rootDir>/../libs/core/src",
+    "^core/core/(.*)$": "<rootDir>/../libs/core/src/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
   }
 }

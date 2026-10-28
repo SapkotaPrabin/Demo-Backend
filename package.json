@@ -14,11 +14,11 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "oxlint src/ test/",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:cov": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest --config ./test/jest-e2e.json",
     "demo-gateway:typeorm": "typeorm-ts-node-commonjs",
     "demo-gateway:typeorm:cli": "node -r tsconfig-paths/register ./node_modules/typeorm/cli-ts-node-commonjs.js",
     "demo-gateway:migration:generate": "npm run demo-gateway:typeorm:cli -- migration:generate src/frameworks/migrations/$npm_config_name -d src/frameworks/datasource.ts",
@@ -85,29 +85,5 @@
   "resolutions": {
     "concaveman": "1.2.1",
     "kdbush": "3.0.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": ".",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "./coverage",
-    "testEnvironment": "node",
-    "roots": [
-      "<rootDir>/",
-      "<rootDir>/libs/"
-    ],
-    "moduleNameMapper": {
-      "^core/core(|/.*)$": "<rootDir>/libs/core/src/$1"
-    }
   }
 }

@@ -19,6 +19,11 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
   throw new Error('DATABASE_PORT must be a valid TCP port');
 }
 
+const configDirectory =
+  typeof __dirname === 'undefined'
+    ? join(process.cwd(), 'src/frameworks/config')
+    : __dirname;
+
 export const typeOrmConfigs: DataSourceOptions = {
   type: 'postgres',
   host: requiredEnv('DATABASE_HOST'),
@@ -32,9 +37,7 @@ export const typeOrmConfigs: DataSourceOptions = {
     MerchantApplication,
     AuditLog,
   ],
-  migrations: [
-    join(__dirname, '../migrations/*{.ts,.js}'),
-  ],
+  migrations: [join(configDirectory, '../migrations/*{.ts,.js}')],
   synchronize: false,
   logging: true,
   maxQueryExecutionTime: 1,

@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { DemoGatewayModule } from './../src/demo-gateway.module';
 
-describe('AppController (e2e)', () => {
+describe('DemoGateway authentication (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,11 +15,10 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('rejects unauthenticated requests to protected routes', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .get('/applications')
+      .expect(401);
   });
 
   afterEach(async () => {
