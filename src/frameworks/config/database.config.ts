@@ -4,6 +4,7 @@ import { join } from 'path';
 import { User } from '../entities/user.entity';
 import { Role } from '../entities/role.entity';
 import { MerchantApplication } from '../entities/merchant_application.entity';
+import { AuditLog } from '../entities/audit-log.entity';
 
 const requiredEnv = (name: string): string => {
   const value = process.env[name];
@@ -29,6 +30,7 @@ export const typeOrmConfigs: DataSourceOptions = {
     User,
     Role,
     MerchantApplication,
+    AuditLog,
   ],
   migrations: [
     join(__dirname, '../migrations/*{.ts,.js}'),

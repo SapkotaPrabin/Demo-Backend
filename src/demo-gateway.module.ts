@@ -21,6 +21,7 @@ import { MerchantApplicationRepository } from './merchant_application/repositori
 import { ApplicationUseCase } from './merchant_application/application/usecases/application.usecase';
 import { UserUseCase } from './user/application/usecases/user.usecase';
 import { UserController } from './user/controllers/user/user.controller';
+import { LoggerService } from './merchant_application/application/services/logger.service';
 
 // Import Core Service configuration and providers
 const RouteProvider = {
@@ -54,6 +55,7 @@ const RouteProvider = {
     UserRepository,
     TokenService,
     MerchantApplicationRepository,
+    LoggerService,
     {
       provide: AuthUseCase,
       inject: [UserRepository, TokenService],
@@ -70,9 +72,9 @@ const RouteProvider = {
     },
     {
       provide: ApplicationUseCase,
-      inject: [UserRepository, MerchantApplicationRepository],
-      useFactory: (userRepository: UserRepository, merchantApplicationRepository: MerchantApplicationRepository) => {
-        return new ApplicationUseCase(userRepository, merchantApplicationRepository);
+      inject: [UserRepository, MerchantApplicationRepository, LoggerService],
+      useFactory: (userRepository: UserRepository, merchantApplicationRepository: MerchantApplicationRepository, loggerService: LoggerService) => {
+        return new ApplicationUseCase(userRepository, merchantApplicationRepository, loggerService);
       },
     },
   ],

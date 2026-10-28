@@ -6,6 +6,7 @@ import { ApplicationStatus, RiskDecision, roleCodes } from 'libs/utils/constants
 import { IMerchantApplicationRepository } from 'src/merchant_application/business/repositories/merchant_application.repository';
 import { CreateApplicationDto, UpdateApplicationDto } from 'src/merchant_application/business/dtos/application.dto';
 import { MerchantApplicationFactory } from 'src/merchant_application/business/factories/application.factory';
+import { LoggerService } from '../services/logger.service';
 import { isAdmin } from 'libs/utils/helper.utils';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class ApplicationUseCase {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly merchantApplicationRepository: IMerchantApplicationRepository,
+    private readonly loggerService: LoggerService,
   ) {}
 
   async create(user: any, input: CreateApplicationDto): Promise<ResponseType> {
@@ -47,6 +49,7 @@ export class ApplicationUseCase {
       application.applicationStatus = input.applicationStatus;
       application.riskStatus = input.riskStatus;
       const savedApplication = await this.merchantApplicationRepository.create(application);
+      await this.loggerService.addLog({ action: 'CREATE', actorUserId: user?.userId, targetType: 'merchant_application', targetId: savedApplication?.applicationId, details: { applicationStatus: input?.applicationStatus, riskStatus: input.riskStatus } });
       return ResponseData('Application created successfully', savedApplication, true, null);
     } catch (error) {
       console.log('Error while create application', error);
@@ -101,6 +104,7 @@ export class ApplicationUseCase {
       currentApplication.createdBy = creator;
       currentApplication.applicationStatus = ApplicationStatus.SUBMITTED;
       const savedApplication = await this.merchantApplicationRepository.create(currentApplication);
+      await this.loggerService.addLog({ action: 'UPDATE', actorUserId: user?.userId, targetType: 'merchant_application', targetId: savedApplication?.applicationId, details: { ...input } });
       return ResponseData('Application updated successfully', savedApplication, true, null);
     } catch (error) {
       console.log('Error while update application', error);
@@ -115,10 +119,9 @@ export class ApplicationUseCase {
       if (!currentApplication) {
         throw new HttpException({ ...ResponseData('Data not found', null, false, { applicationId: 'Merchant application not found' }) }, HttpStatus.NOT_FOUND);
       }
-      const isAssignedReviewer = user?.role?.some((role) => role.roleCode === roleCodes.REVIEWER)
-        && currentApplication.assignedReviewer?.userId === user?.userId;
-      if (!isAssignedReviewer) {
-        throw new ForbiddenException('Only the assigned reviewer may record a risk decision');
+      const isAssignedReviewer = user?.role?.some((role) => role.roleCode === roleCodes.REVIEWER) && currentApplication.assignedReviewer?.userId === user?.userId;
+      if (!isAssignedReviewer && !isAdmin(user)) {
+        throw new HttpException({ ...ResponseData('Data not valid', null, false, { applicationId: 'Only the assigned reviewer may record a risk decision' }) }, HttpStatus.FORBIDDEN);
       }
       if (!status) {
         throw new HttpException({ ...ResponseData('Data not found', null, false, { status: 'Status must be mandatory' }) }, HttpStatus.NOT_FOUND);
@@ -136,6 +139,7 @@ export class ApplicationUseCase {
           throw new HttpException({ ...ResponseData('Data not found', null, false, { status: 'Status value not valid' }) }, HttpStatus.BAD_REQUEST);
       }
       await this.merchantApplicationRepository.create(currentApplication);
+      await this.loggerService.addLog({ action: 'UPDATE', actorUserId: user?.userId, targetType: 'risk_decision', targetId: applicationId, details: { ...input } });
       return ResponseData('Risk decision updated successfully', currentApplication, true, null);
     } catch (error) {
       console.log('Error while update risk decision', error);
