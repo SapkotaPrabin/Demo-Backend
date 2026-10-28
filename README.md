@@ -31,6 +31,32 @@
 $ yarn install
 ```
 
+Before running the project, create your local environment file from the example:
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in the appropriate values for your environment, including the encryption key and IV, database credentials, JWT issuer/audience and key pair, and Redis connection settings. The example contains local development defaults where applicable; replace placeholders and any defaults that do not match your setup. Keep `.env` private and do not commit it.
+
+### Generate JWT keys
+
+Generate an RSA private/public key pair (2048 bits or larger) with OpenSSL:
+
+```bash
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out jwt-private.pem
+openssl rsa -pubout -in jwt-private.pem -out jwt-public.pem
+```
+
+Set `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY` in `.env` to the contents of the corresponding PEM files. Use PEM's `\\n` escaped newlines on a single `.env` line, for example:
+
+```dotenv
+JWT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n"
+JWT_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\\n...\\n-----END PUBLIC KEY-----\\n"
+```
+
+Keep the private key secret. The current API signs tokens with `JWT_PRIVATE_KEY`; confirm the verifier uses the matching public key before relying on this pair for signature verification.
+
 ## Run with Docker Compose
 
 Start the API, PostgreSQL, and Redis containers:
