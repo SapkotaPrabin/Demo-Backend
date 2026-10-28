@@ -1,6 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BullModule } from '@nestjs/bullmq';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JwtModule } from '@nestjs/jwt';
 import { HttpModule } from '@nestjs/axios';
@@ -8,7 +9,7 @@ import { ProxyMiddleware } from './middlewares/proxy.middleware';
 import { ServiceRouteProvider } from './routes';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { SharedModule } from 'libs/modules';
-import { CoreModule } from 'core/core';
+import { CoreModule, Queues, RiskDecisionProducer } from 'core/core';
 import { AuthUseCase } from './user/application/usecases/auth.usecase';
 import { typeOrmConfigs } from './frameworks/config/database.config';
 import { AuthController } from './user/controllers/auth/auth.controller';
@@ -22,6 +23,7 @@ import { ApplicationUseCase } from './merchant_application/application/usecases/
 import { UserUseCase } from './user/application/usecases/user.usecase';
 import { UserController } from './user/controllers/user/user.controller';
 import { LoggerService } from './merchant_application/application/services/logger.service';
+import { RiskDecisionReceiver } from './merchant_application/application/receivers/risk-decision.receiver';
 
 // Import Core Service configuration and providers
 const RouteProvider = {
@@ -39,6 +41,7 @@ const RouteProvider = {
     }),
     TypeOrmModule.forRoot(typeOrmConfigs),
     TypeOrmModule.forFeature([MerchantApplication, User]),
+    BullModule.registerQueue({ name: Queues.RISK_DECISION_QUEUE }),
     SharedModule,
     CoreModule,
     JwtModule.register({
@@ -55,7 +58,9 @@ const RouteProvider = {
     UserRepository,
     TokenService,
     MerchantApplicationRepository,
+    RiskDecisionProducer,
     LoggerService,
+    RiskDecisionReceiver,
     {
       provide: AuthUseCase,
       inject: [UserRepository, TokenService],
@@ -72,9 +77,9 @@ const RouteProvider = {
     },
     {
       provide: ApplicationUseCase,
-      inject: [UserRepository, MerchantApplicationRepository, LoggerService],
-      useFactory: (userRepository: UserRepository, merchantApplicationRepository: MerchantApplicationRepository, loggerService: LoggerService) => {
-        return new ApplicationUseCase(userRepository, merchantApplicationRepository, loggerService);
+      inject: [UserRepository, MerchantApplicationRepository, LoggerService, RiskDecisionProducer],
+      useFactory: (userRepository: UserRepository, merchantApplicationRepository: MerchantApplicationRepository, loggerService: LoggerService, riskDecisionProducer: RiskDecisionProducer) => {
+        return new ApplicationUseCase(userRepository, merchantApplicationRepository, loggerService, riskDecisionProducer);
       },
     },
   ],

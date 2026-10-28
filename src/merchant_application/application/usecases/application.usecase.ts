@@ -8,6 +8,7 @@ import { CreateApplicationDto, UpdateApplicationDto } from 'src/merchant_applica
 import { MerchantApplicationFactory } from 'src/merchant_application/business/factories/application.factory';
 import { LoggerService } from '../services/logger.service';
 import { isAdmin } from 'libs/utils/helper.utils';
+import { RiskDecisionProducer, UpdateRiskDecisionJob } from 'core/core';
 
 @Injectable()
 export class ApplicationUseCase {
@@ -15,6 +16,7 @@ export class ApplicationUseCase {
     private readonly userRepository: IUserRepository,
     private readonly merchantApplicationRepository: IMerchantApplicationRepository,
     private readonly loggerService: LoggerService,
+    private readonly riskDecisionProducer: RiskDecisionProducer,
   ) {}
 
   async create(user: any, input: CreateApplicationDto): Promise<ResponseType> {
@@ -128,19 +130,23 @@ export class ApplicationUseCase {
       } else if (!['accepted', 'rejected']?.includes(status)) {
         throw new HttpException({ ...ResponseData('Data not found', null, false, { status: 'Status value not valid' }) }, HttpStatus.BAD_REQUEST);
       }
+      let decision: UpdateRiskDecisionJob['decision'];
       switch (status) {
         case 'accepted':
-          currentApplication.riskDecision = RiskDecision.APPROVE;
+          decision = RiskDecision.APPROVE;
           break;
         case 'rejected':
-          currentApplication.riskDecision = RiskDecision.REJECT;
+          decision = RiskDecision.REJECT;
           break;
         default:
           throw new HttpException({ ...ResponseData('Data not found', null, false, { status: 'Status value not valid' }) }, HttpStatus.BAD_REQUEST);
       }
-      await this.merchantApplicationRepository.create(currentApplication);
-      await this.loggerService.addLog({ action: 'UPDATE', actorUserId: user?.userId, targetType: 'risk_decision', targetId: applicationId, details: { ...input } });
-      return ResponseData('Risk decision updated successfully', currentApplication, true, null);
+      const job = await this.riskDecisionProducer.produce({
+        applicationId,
+        actorUserId: user.userId,
+        decision,
+      });
+      return ResponseData('Risk decision update queued successfully', { applicationId, decision, jobId: job.id }, true, null);
     } catch (error) {
       console.log('Error while update risk decision', error);
       throw error;
