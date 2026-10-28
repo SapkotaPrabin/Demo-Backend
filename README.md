@@ -31,6 +31,51 @@
 $ yarn install
 ```
 
+## Run with Docker Compose
+
+Start the API, PostgreSQL, and Redis containers:
+
+```bash
+docker compose up --build
+```
+
+The API is available at `http://localhost:3000` by default. Compose waits for PostgreSQL and Redis to become healthy, runs pending TypeORM migrations, then starts the API. Set `CORE_SERVICE_PORT` to change the host port. Database credentials can be set with `DATABASE_USERNAME`, `DATABASE_PASSWORD`, and `DATABASE_NAME` in the shell or the project `.env` file. The included defaults are intended for local development.
+
+Stop the services with `docker compose down`. Add `-v` to remove the local PostgreSQL and Redis data volumes.
+
+### Create the database, run migrations, and seed data in Docker
+
+PostgreSQL creates `DATABASE_NAME` automatically when its data volume is initialized. To run the idempotent database creation script manually:
+
+```bash
+docker compose exec app yarn demo-gateway:database:create
+```
+
+The app container runs pending migrations before startup. To run them manually:
+
+```bash
+docker compose exec app yarn demo-gateway:migration:run
+```
+
+Run the seeders in order, after the database and migrations are ready:
+
+```bash
+docker compose exec app yarn demo-service:seed-default-roles
+docker compose exec app yarn demo-service:seed-default-admin
+docker compose exec app yarn demo-service:seed-default-sales
+docker compose exec app yarn demo-service:seed-default-reviewer
+```
+
+## Create the configured database
+
+With `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, and `DATABASE_NAME` set in the project `.env` file, run:
+
+```bash
+yarn demo-gateway:database:create
+```
+
+The script connects to PostgreSQL's default `postgres` database and creates `DATABASE_NAME` if it does not already exist. The configured user needs permission to create databases.
+
 ## Compile and run the project
 
 ```bash

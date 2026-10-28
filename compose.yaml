@@ -1,0 +1,88 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      CORE_SERVICE_PORT: 3000
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-demo}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-demo}
+      DATABASE_NAME: ${DATABASE_NAME:-demo}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_USERNAME: ${REDIS_USERNAME:-}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-local-dev-encryption-key}
+      ENCRYPTION_IV: ${ENCRYPTION_IV:-local-dev-encryption-iv}
+      ISS: ${ISS:-demo-backend}
+      AUD: ${AUD:-demo-backend-client}
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:-local-development-only-secret}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-local-development-only-secret}
+    ports:
+      - "${CORE_SERVICE_PORT:-3000}:3000"
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME:-demo}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-demo}
+      POSTGRES_DB: ${DATABASE_NAME:-demo}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_USERNAME: ${REDIS_USERNAME:-}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    command:
+      - sh
+      - -c
+      - |
+        if [ -n "$$REDIS_USERNAME" ] && [ -n "$$REDIS_PASSWORD" ]; then
+          exec redis-server --appendonly yes --user default off --user "$$REDIS_USERNAME" on ">$$REDIS_PASSWORD" "~*" "&*"
+        elif [ -n "$$REDIS_PASSWORD" ]; then
+          exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"
+        else
+          exec redis-server --appendonly yes
+        fi
+    ports:
+      - "${REDIS_EXTERNAL_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          if [ -n "$$REDIS_USERNAME" ]; then
+            redis-cli --user "$$REDIS_USERNAME" --pass "$$REDIS_PASSWORD" ping;
+          elif [ -n "$$REDIS_PASSWORD" ]; then
+            redis-cli --pass "$$REDIS_PASSWORD" ping;
+          else
+            redis-cli ping;
+          fi
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_data:
+  redis_data:

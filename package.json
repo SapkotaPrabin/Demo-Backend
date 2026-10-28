@@ -22,12 +22,13 @@
     "demo-gateway:typeorm": "typeorm-ts-node-commonjs",
     "demo-gateway:typeorm:cli": "node -r tsconfig-paths/register ./node_modules/typeorm/cli-ts-node-commonjs.js",
     "demo-gateway:migration:generate": "npm run demo-gateway:typeorm:cli -- migration:generate src/frameworks/migrations/$npm_config_name -d src/frameworks/datasource.ts",
+    "demo-gateway:database:create": "sh scripts/create-database.sh",
     "demo-gateway:migration:create": "npm run demo-gateway:typeorm -- migration:create src/frameworks/migrations/$npm_config_name",
-    "demo-gateway:migration:run": "npm run demo-gateway:typeorm:cli -- migration:run -d src/frameworks/datasource.ts",
-    "demo-service:seed-default-roles": "ts-node -r tsconfig-paths/register src/frameworks/seeds/roles.seeder.ts",
-    "demo-service:seed-default-admin": "ts-node -r tsconfig-paths/register src/frameworks/seeds/admin.seeder.ts",
-    "demo-service:seed-default-sales": "ts-node -r tsconfig-paths/register src/frameworks/seeds/sales.seeder.ts",
-    "demo-service:seed-default-reviewer": "ts-node -r tsconfig-paths/register src/frameworks/seeds/reviewer.seeder.ts"
+    "demo-gateway:migration:run": "if [ -f dist/src/frameworks/datasource.js ]; then node ./node_modules/typeorm/cli.js migration:run -d dist/src/frameworks/datasource.js; else npm run demo-gateway:typeorm:cli -- migration:run -d src/frameworks/datasource.ts; fi",
+    "demo-service:seed-default-roles": "if [ -f dist/src/frameworks/seeds/roles.seeder.js ]; then node dist/src/frameworks/seeds/roles.seeder.js; else ts-node -r tsconfig-paths/register src/frameworks/seeds/roles.seeder.ts; fi",
+    "demo-service:seed-default-admin": "if [ -f dist/src/frameworks/seeds/admin.seeder.js ]; then node dist/src/frameworks/seeds/admin.seeder.js; else ts-node -r tsconfig-paths/register src/frameworks/seeds/admin.seeder.ts; fi",
+    "demo-service:seed-default-sales": "if [ -f dist/src/frameworks/seeds/sales.seeder.js ]; then node dist/src/frameworks/seeds/sales.seeder.js; else ts-node -r tsconfig-paths/register src/frameworks/seeds/sales.seeder.ts; fi",
+    "demo-service:seed-default-reviewer": "if [ -f dist/src/frameworks/seeds/reviewer.seeder.js ]; then node dist/src/frameworks/seeds/reviewer.seeder.js; else ts-node -r tsconfig-paths/register src/frameworks/seeds/reviewer.seeder.ts; fi"
   },
   "dependencies": {
     "@nestjs/axios": "^12.0.1",
