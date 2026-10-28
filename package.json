@@ -15,6 +15,7 @@
     "start:prod": "node dist/main",
     "lint": "oxlint src/ test/",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:application-controller": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand src/merchant_application/controllers/application/application.controller.spec.ts",
     "test:watch": "jest --watch",
     "test:cov": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

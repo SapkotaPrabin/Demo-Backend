@@ -121,6 +121,9 @@ $ yarn run start:prod
 # unit tests
 $ yarn run test
 
+# application controller test
+$ yarn run test:application-controller
+
 # e2e tests
 $ yarn run test:e2e
 
